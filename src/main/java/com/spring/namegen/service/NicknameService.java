@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class NicknameService {
@@ -127,6 +129,69 @@ public class NicknameService {
                     .readValue(content, new TypeReference<List<String>>() {}
                     );
             return new ResponseDTO(nicknameList);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ResponseDTO generateCarNickname(String car, String keyword) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String condition = Stream.of(
+                car != null && !car.isBlank() ? "차종 \\\"" + car.trim() + "\\\"" : null,
+                keyword != null && !keyword.isBlank() ? "키워드 \\\"" + keyword.trim() + "\\\"" : null
+        )
+                .filter(value -> value != null)
+                .collect(Collectors.joining("와(과) "));
+
+        String body = """
+                {
+                    "model": "%s",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": "너는 창의적이고 감각적인 자동차 애칭을 만들어주는 최고의 생성기야. 사용자 요청에 반드시 JSON 배열 형태로만 응답해야 해. 설명 없이 배열만 출력해야 해."
+                        },
+                        {
+                            "role": "user",
+                            "content": "%s을(를) 바탕으로 자동차 애칭 5개를 추천해줘. 줄임말, 말장난, 센스 있는 조합도 괜찮고, 짧고 인상 깊은 이름이면 더 좋아. 출력은 반드시 [\\\"애칭1\\\", \\\"애칭2\\\", \\\"애칭3\\\", \\\"애칭4\\\", \\\"애칭5\\\"] 형식의 JSON 배열만 보여줘."
+                        }
+                    ]
+                }
+                
+                """.formatted(model, condition);
+
+        HttpEntity<String> entity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                apiUrl,
+                entity,
+                String.class
+        );
+
+        String content = null;
+        try {
+            content = new ObjectMapper()
+                    .readTree(response.getBody())
+                    .path("choices").get(0)
+                    .path("message")
+                    .path("content")
+                    .asText();
+        } catch (JsonMappingException e) {
+            throw new RuntimeException(e);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            List<String> nicknameList = new ObjectMapper()
+                    .readValue(content, new TypeReference<List<String>>() {}
+                    );
+            return new ResponseDTO(nicknameList);
+        } catch (JsonMappingException e) {
+            throw new RuntimeException(e);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
