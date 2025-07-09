@@ -44,13 +44,13 @@
     <li><button onclick="showTab(2)">내 자동차 애칭</button></li>
 </ul>
 
-<!-- 인스타 탭 -->
+<!-- 게임 탭 -->
 <div class="tab-content active" id="tab-0">
     <input type="text" id="input-game" placeholder="단어 입력" />
     <button type="button" onclick="generateGame()">생성하기</button>
 </div>
 
-<!-- 게임 탭 -->
+<!-- 인스타 탭 -->
 <div class="tab-content" id="tab-1">
     <input type="text" id="input-insta" placeholder="단어 입력" />
     <button type="button" onclick="generateInsta()">생성하기</button>
@@ -115,7 +115,7 @@
         const keyword = document.getElementById('input-insta').value.trim();
 
         $.ajax({
-            url: '/api/nickname/insta',
+            url: '/api/nickname/instagram',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ keyword: keyword }),
@@ -125,10 +125,10 @@
     }
 
     function generateCar() {
-        const keyword1 = document.getElementById('input-car-1').value.trim();
-        const keyword2 = document.getElementById('input-car-2').value.trim();
+        const car = document.getElementById('input-car-1').value.trim();
+        const keyword = document.getElementById('input-car-2').value.trim();
 
-        if (keyword1 === '' && keyword2 === '') {
+        if (car === '' && keyword === '') {
             alert('최소 하나의 단어를 입력해야 합니다.');
             return;
         }
@@ -136,10 +136,10 @@
         $.ajax({
             url: '/api/nickname/car',
             method: 'POST',
-            data: {
-                car: keyword1,
-                keyword: keyword2
-            },
+            contentType: 'application/json',
+            data: JSON.stringify({
+                car: car,
+                keyword: keyword }),
             success: showResult,
             error: showError
         });
