@@ -61,27 +61,21 @@ public class NicknameService {
                 String.class
         );
 
-        String content = null;
+        ObjectMapper objectMapper = new ObjectMapper();
+
         try {
-            content = new ObjectMapper()
+            String content = objectMapper
                     .readTree(response.getBody())
                     .path("choices").get(0)
                     .path("message")
                     .path("content")
                     .asText();
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
 
-        try {
-            List<String> nicknameList = new ObjectMapper()
+            List<String> nicknameList = objectMapper
                     .readValue(content, new TypeReference<List<String>>() {}
                     );
             return nicknameList;
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
+
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
