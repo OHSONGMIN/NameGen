@@ -32,6 +32,61 @@ public class NicknameService {
     @Value("${openai.model}")
     private String model;
 
+    public List<String> requestNicknamesFromOpenAi(String systemPrompt, String userPrompt) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String body = """
+                {
+                    "model": "%s",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": "%s"
+                        },
+                        {
+                            "role": "user",
+                            "content": "%s"
+                        }
+                    ]
+                }
+                """.formatted(model, systemPrompt, userPrompt);
+
+        HttpEntity<String> entity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                apiUrl,
+                entity,
+                String.class
+        );
+
+        String content = null;
+        try {
+            content = new ObjectMapper()
+                    .readTree(response.getBody())
+                    .path("choices").get(0)
+                    .path("message")
+                    .path("content")
+                    .asText();
+        } catch (JsonMappingException e) {
+            throw new RuntimeException(e);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            List<String> nicknameList = new ObjectMapper()
+                    .readValue(content, new TypeReference<List<String>>() {}
+                    );
+            return nicknameList;
+        } catch (JsonMappingException e) {
+            throw new RuntimeException(e);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public ResponseDTO generateGameNickname(String keyword) {
 
         HttpHeaders headers = new HttpHeaders();
