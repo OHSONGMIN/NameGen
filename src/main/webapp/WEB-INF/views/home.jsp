@@ -4,19 +4,53 @@
     <title>닉네임 생성기</title>
 
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 100px 0 30px 0;
+            padding: 50px 20px; /* 위아래 여백 충분히 */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 34px;
+            margin: 30px 0 40px; /* 위쪽 넉넉, 아래도 시원하게 */
+            text-align: center;
+        }
+
         .tabs {
             display: flex;
+            justify-content: center;
             list-style-type: none;
             padding: 0;
-            margin-bottom: 10px;
+            margin-bottom: 30px; /* 탭 아래도 여백 */
         }
 
         .tabs li {
-            margin-right: 10px;
+            margin: 0 10px;
+        }
+
+        .tabs button {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            font-size: 18px;
+            cursor: pointer;
         }
 
         .tabs button.active {
             font-weight: bold;
+            text-decoration: underline;
         }
 
         .tab-content {
@@ -24,16 +58,58 @@
         }
 
         .tab-content.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-content input[type="text"] {
+            padding: 12px;
+            margin: 10px 0;
+            width: 80%;
+            max-width: 350px;
+            box-sizing: border-box;
+            font-size: 17px;
+            text-align: center;
+        }
+
+        .tab-content button[type="button"] {
+            width: 80%;
+            max-width: 350px;
+            padding: 16px 0;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            background-color: #8C8C8C; /* 덜 까만 짙은 회색 */
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
         }
 
         .result {
-            margin-top: 20px;
+            margin-top: 45px;
+            background-color: #E1E1E1;
+            padding: 25px;
+            /*border-radius: 12px;*/
+            text-align: center;
+            font-size: 19px;
+        }
+
+        .result ul {
+            padding-left: 10px;
+            margin: 15px 0 0;
+            text-align: left; /* 닉네임 리스트는 좌측 정렬 */
+            display: inline-block; /* 중앙 영역 안에서만 좌측정렬 */
         }
     </style>
+
 </head>
 
 <body>
+<div dlass="container">
 
 <h1>닉네임 생성기</h1>
 
@@ -162,5 +238,6 @@
     }
 </script>
 
+</div>
 </body>
 </html>
